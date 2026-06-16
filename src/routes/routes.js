@@ -6,9 +6,9 @@ import pedidoRoutes from './pedidoRoutes.js';
 import imagensRoutes from './imagensRoutes.js';
 
 
-routes.use('/categorias', categoriaRoutes);
-routes.use('/produtos', produtosRoutes);
-routes.use('/pedidos', pedidoRoutes);
-routes.use('/imagens', imagensRoutes);
+routes.use('/Categorias', categoriaRoutes);
+routes.use('/Produtos', produtosRoutes);
+routes.use('/Pedidos', pedidoRoutes);
+routes.use('/Imagens', imagensRoutes);
 
 export default routes;

@@ -1,5 +1,5 @@
 import { connection } from "../config/Database.js";
-// Repositório para gerenciar pedidos e itens de pedidos
+// Repositório para gerenciar Pedidos e itens de Pedidos
 const pedidoRepository = {
 
     criar: async (pedido, itens) => {
@@ -13,7 +13,7 @@ const pedidoRepository = {
             for (const item of itens) {
                 // Buscar produto com FOR UPDATE (evita venda duplicada)
                 const [produtoRows] = await conn.execute(
-                    "SELECT quantidade, preco FROM produtos WHERE id = ? FOR UPDATE",
+                    "SELECT quantidade, preco FROM Produtos WHERE id = ? FOR UPDATE",
                     [item.produtoId]
                 );
 
@@ -31,13 +31,13 @@ const pedidoRepository = {
 
                 // Atualizar o estoque do produto no banco de dados
                 const [rowsPed] = await conn.execute(
-                    "UPDATE produtos SET quantidade = ? WHERE id = ?",
+                    "UPDATE Produtos SET quantidade = ? WHERE id = ?",
                     [produtoRows[0].quantidade, item.produtoId]
                 ); 
             }
 
             const [pedidoResult] = await conn.execute(
-                "INSERT INTO pedidos(valorTotal, Status) VALUES (?, ?)",
+                "INSERT INTO Pedidos(valorTotal, Status) VALUES (?, ?)",
                 [valorTotal, pedido.status]
             );
 
@@ -46,13 +46,13 @@ const pedidoRepository = {
             // Inserir os itens do pedido
             for (const item of itens) {
                 const [produtoPreco] = await conn.execute(
-                    "SELECT preco FROM produtos WHERE id = ?",
+                    "SELECT preco FROM Produtos WHERE id = ?",
                     [item.produtoId]
                 );
 
                 await conn.execute(
-                    `INSERT INTO itens_pedidos (pedidoId, produtoId, quantidade, valorItem)
-             VALUES (?, ?, ?, ?)`,
+                          `INSERT INTO itens_Pedidos (pedidoId, produtoId, quantidade, valorItem)
+                      VALUES (?, ?, ?, ?)`,
                     [pedidoId, item.produtoId, item.quantidade, produtoPreco[0].preco]
                 );
             }
@@ -81,7 +81,7 @@ const pedidoRepository = {
 
             for (const item of itens) {
                 const [produto] = await conn.execute(
-                    "SELECT preco FROM produtos WHERE id = ?",
+                    "SELECT preco FROM Produtos WHERE id = ?",
                     [item.produtoId]
                 );
 
@@ -97,20 +97,20 @@ const pedidoRepository = {
             }
 
             await conn.execute(
-                "UPDATE pedidos SET valorTotal = ?, Status = ? WHERE id = ?",
+                "UPDATE Pedidos SET valorTotal = ?, Status = ? WHERE id = ?",
                 [subTotal, pedido.status, id]
             );            
 
             for (const item of itens) {
                 const [produto] = await conn.execute(
-                    "SELECT preco FROM produtos WHERE id = ?",
+                    "SELECT preco FROM Produtos WHERE id = ?",
                     [item.produtoId]
                 );
 
                 const valor = produto[0].preco;
 
                 await conn.execute(
-                    `INSERT INTO itens_pedidos (pedidoId, produtoId, quantidade, valorItem)
+                    `INSERT INTO itens_Pedidos (pedidoId, produtoId, quantidade, valorItem)
                      VALUES (?, ?, ?, ?)`,
                     [id, item.produtoId, item.quantidade, valor]
                 );
@@ -135,12 +135,12 @@ const pedidoRepository = {
             await conn.beginTransaction();
 
             await conn.execute(
-                "DELETE FROM itens_pedidos WHERE pedidoId = ?",
+                "DELETE FROM itens_Pedidos WHERE pedidoId = ?",
                 [id]
             );
 
             await conn.execute(
-                "DELETE FROM pedidos WHERE id = ?",
+                "DELETE FROM Pedidos WHERE id = ?",
                 [id]
             );
 
@@ -162,7 +162,7 @@ const pedidoRepository = {
             await conn.beginTransaction();
 
             const [item] = await conn.execute(
-                "SELECT * FROM itens_pedidos WHERE id = ? AND pedidoId = ?",
+                "SELECT * FROM itens_Pedidos WHERE id = ? AND pedidoId = ?",
                 [itemId, pedidoId]
             );
 
@@ -171,12 +171,12 @@ const pedidoRepository = {
             }
 
             await conn.execute(
-                "DELETE FROM itens_pedidos WHERE id = ?",
+                "DELETE FROM itens_Pedidos WHERE id = ?",
                 [itemId]
             );
 
             const [itens] = await conn.execute(
-                "SELECT quantidade, valorItem FROM itens_pedidos WHERE pedidoId = ?",
+                "SELECT quantidade, valorItem FROM itens_Pedidos WHERE pedidoId = ?",
                 [pedidoId]
             );
 
@@ -187,7 +187,7 @@ const pedidoRepository = {
             });
 
             await conn.execute(
-                "UPDATE pedidos SET valorTotal = ? WHERE id = ?",
+                "UPDATE Pedidos SET valorTotal = ? WHERE id = ?",
                 [valorTotal, pedidoId]
             );
 
@@ -203,7 +203,7 @@ const pedidoRepository = {
         }
     },
 
-    // Selecionar todos os pedidos com seus itens associados, ordenados por ID do pedido e ID do item
+    // Selecionar todos os Pedidos com seus itens associados, ordenados por ID do pedido e ID do item
     selecionar: async () => {
         const [rows] = await connection.execute(`
             SELECT 
@@ -212,8 +212,8 @@ const pedidoRepository = {
                 i.produtoId,
                 i.quantidade,
                 i.valorItem
-            FROM pedidos p
-            LEFT JOIN itens_pedidos i ON i.pedidoId = p.id
+            FROM Pedidos p
+            LEFT JOIN itens_Pedidos i ON i.pedidoId = p.id
             ORDER BY p.id DESC, i.id ASC
         `);
 
@@ -228,7 +228,7 @@ const pedidoRepository = {
             await conn.beginTransaction();
 
             const [produto] = await conn.execute(
-                "SELECT preco FROM produtos WHERE id = ?",
+                "SELECT preco FROM Produtos WHERE id = ?",
                 [item.produtoId]
             );
 
@@ -239,13 +239,13 @@ const pedidoRepository = {
             const preco = produto[0].preco;
 
             await conn.execute(
-                `INSERT INTO itens_pedidos (pedidoId, produtoId, quantidade, valorItem)
-             VALUES (?, ?, ?, ?)`,
+                `INSERT INTO itens_Pedidos (pedidoId, produtoId, quantidade, valorItem)
+                 VALUES (?, ?, ?, ?)`,
                 [pedidoId, item.produtoId, item.quantidade, preco]
             );
 
             await conn.execute(
-                `UPDATE pedidos 
+                `UPDATE Pedidos 
              SET valorTotal = valorTotal + ? 
              WHERE id = ?`,
                 [preco * item.quantidade, pedidoId]
@@ -275,7 +275,7 @@ const pedidoRepository = {
             }
 
             const [item] = await conn.execute(
-                "SELECT * FROM itens_pedidos WHERE id = ? AND pedidoId = ?",
+                "SELECT * FROM itens_Pedidos WHERE id = ? AND pedidoId = ?",
                 [itemId, pedidoId]
             );
 
@@ -284,7 +284,7 @@ const pedidoRepository = {
             }
 
             const [produto] = await conn.execute(
-                "SELECT preco FROM produtos WHERE Id = ?",
+                "SELECT preco FROM Produtos WHERE Id = ?",
                 [item[0].produtoId]
             );
 
@@ -295,14 +295,14 @@ const pedidoRepository = {
             const subTotal = produto[0].preco;
 
             await conn.execute(
-                `UPDATE itens_pedidos 
+                `UPDATE itens_Pedidos 
              SET quantidade = ?, valorItem = ? 
              WHERE id = ?`,
                 [quantidade, subTotal, itemId]
             );
 
             const [itens] = await conn.execute(
-                "SELECT quantidade, valorItem FROM itens_pedidos WHERE pedidoId = ?",
+                "SELECT quantidade, valorItem FROM itens_Pedidos WHERE pedidoId = ?",
                 [pedidoId]
             );
 
@@ -313,7 +313,7 @@ const pedidoRepository = {
             });
 
             await conn.execute(
-                "UPDATE pedidos SET valorTotal = ? WHERE id = ?",
+                "UPDATE Pedidos SET valorTotal = ? WHERE id = ?",
                 [valorTotal, pedidoId]
             );
 
@@ -341,7 +341,7 @@ const pedidoRepository = {
             }
 
             const [pedido] = await conn.execute(
-                "SELECT * FROM pedidos WHERE id = ?",
+                "SELECT * FROM Pedidos WHERE id = ?",
                 [id]
             );
 
@@ -350,7 +350,7 @@ const pedidoRepository = {
             }
 
             await conn.execute(
-                "UPDATE pedidos SET Status = ? WHERE id = ?",
+                "UPDATE Pedidos SET Status = ? WHERE id = ?",
                 [status, id]
             );
 

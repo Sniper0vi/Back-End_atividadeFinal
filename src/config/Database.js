@@ -29,9 +29,15 @@ class Database {
     static getInstance() {
         if (!Database.#instance) {
             Database.#instance = new Database();
-            Database.#instance.#createPool();
         }
         return Database.#instance;
+    }
+
+    static initializePool() {
+        const inst = Database.getInstance();
+        if (!inst.#pool) {
+            inst.#createPool();
+        }
     }
 
 
@@ -102,6 +108,11 @@ export async function initializeDatabase() {
 
 
         await tempConnection.end();
+
+        // Agora que o banco e tabelas existem, inicializa a pool de conexões
+        Database.initializePool();
+        connection = Database.getInstance().getPool();
+
         console.log("Banco de dados e tabelas verificados/criados com sucesso.");
     } catch (error) {
         console.error("Erro ao criar o banco ou as tabelas:", error);
@@ -109,4 +120,4 @@ export async function initializeDatabase() {
     }
 }
 
-export const connection = Database.getInstance().getPool();
+export let connection = null;

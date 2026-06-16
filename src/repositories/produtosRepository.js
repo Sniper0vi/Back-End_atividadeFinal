@@ -1,8 +1,8 @@
 import { connection } from "../config/Database.js";
 
-const produtosRepository = {
+const ProdutosRepository = {
     criar:async (dados) => {
-        const sql = 'INSERT INTO produtos(nome, descricao, preco, image, quantidade, idCategoria)VALUES (?, ?, ?, ?, ?, ?);';
+        const sql = 'INSERT INTO Produtos(nome, descricao, preco, image, quantidade, idCategoria)VALUES (?, ?, ?, ?, ?, ?);';
         const values = [dados.nome, dados.descricao, dados.preco, dados.image, dados.quantidade, dados.idCategoria];
         console.log(values);
         const [rows] = await connection.execute(sql, values);
@@ -11,29 +11,29 @@ const produtosRepository = {
         
     },
     editar:async (dados) => {
-        const sql = 'UPDATE produtos SET  nome=?, descricao=?, preco=?, image=?, quantidade=?, idCategoria=? WHERE id = ?;'
+        const sql = 'UPDATE Produtos SET  nome=?, descricao=?, preco=?, image=?, quantidade=?, idCategoria=? WHERE id = ?;'
         const values = [dados.nome, dados.descricao, dados.preco, dados.image, dados.quantidade, dados.idCategoria, dados.idProduto];
         const [rows] = await connection.execute(sql, values);
         return rows
     },
     deletar:async (id) => {
-        const sql = 'DELETE FROM produtos WHERE id = ?;'
+        const sql = 'DELETE FROM Produtos WHERE id = ?;'
         const values = [id];
         const [rows] = await connection.execute(sql, values);
         return rows
     },
     selecionar:async () => {
-        const sql = 'SELECT * FROM produtos;'
+        const sql = 'SELECT * FROM Produtos;'
         const [rows] = await connection.execute(sql);
         return rows
     },
 
     selecionarId: async (id)=> {
-        const sql = "SELECT * FROM produtos  WHERE id=?;";
+        const sql = "SELECT * FROM Produtos  WHERE id=?;";
         const values = [id];
         const [rows] = await connection.execute(sql, values);
         return rows
     }
 }
 
-export default produtosRepository
+export default ProdutosRepository
