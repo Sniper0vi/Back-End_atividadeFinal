@@ -79,7 +79,7 @@ export async function initializeDatabase() {
             );	
         `);
         await tempConnection.query(`
-            CREATE TABLE IF NOT EXISTS Categorias(
+            CREATE TABLE IF NOT EXISTS categorias(
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 nome VARCHAR(45) NOT NULL,
                 descricao VARCHAR(100) NULL,
