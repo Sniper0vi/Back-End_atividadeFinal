@@ -60,7 +60,7 @@ export async function initializeDatabase() {
 
 
         const dbName = process.env.DB_DATABASE || 'deploy';
-        =[]
+
         await tempConnection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
         await tempConnection.query(`USE \`${dbName}\`;`);
 
