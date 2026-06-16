@@ -55,7 +55,7 @@ export async function initializeDatabase() {
 
 
         await tempConnection.query(`
-    CONSTRAINT FK_produtos_categorias
+    CONSTRAINT FK_produtos_categorias(
     FOREIGN KEY (idCategoria) REFERENCES categorias(id)
 );
         `);
