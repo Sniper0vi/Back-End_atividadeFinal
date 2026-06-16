@@ -26,7 +26,7 @@ const categoriaRepository = {
         return rows
     },
     // Selecionar todas as categorias, retornando uma lista de categorias com seus campos correspondentes
-    selecionar:async (id) => {
+    selecionar:async () => {
         const sql = 'SELECT * FROM categorias;'
         const [rows] = await connection.execute(sql);
         return rows
