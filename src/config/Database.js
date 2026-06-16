@@ -1,14 +1,14 @@
-import mysql from 'mysql2/promise';
-import 'dotenv/config';
+ import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
 
-//design pattern: Singleton ---> permite  a criação de apenas uma instância da classe
+
+// Singleton para a conexão com o banco de dados
 class Database {
     static #instance = null;
     #pool = null;
 
-    //#pool: pool de conexões com o banco de dados
+
     #createPool() {
-        //criação do pool de conexões com o banco de dados
         this.#pool = mysql.createPool({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
@@ -17,11 +17,14 @@ class Database {
             port: process.env.DB_PORT,
             waitForConnections: true,
             connectionLimit: 100,
-            queueLimit: 0
+            queueLimit: 0,
+            ssl: {
+                rejectUnauthorized: false
+            }
         });
     }
 
-    //getInstance: método estático para obter a instância da classe Database
+
     static getInstance() {
         if (!Database.#instance) {
             Database.#instance = new Database();
@@ -29,8 +32,10 @@ class Database {
         }
         return Database.#instance;
     }
+
+
     getPool() {
-        return this.#pool
+        return this.#pool;
     }
 }
 
@@ -55,7 +60,7 @@ export async function initializeDatabase() {
 
 
         await tempConnection.query(`
-    CONSTRAINT FK_produtos_categorias(
+    CONSTRAINT FK_produtos_categorias
     FOREIGN KEY (idCategoria) REFERENCES categorias(id)
 );
         `);
