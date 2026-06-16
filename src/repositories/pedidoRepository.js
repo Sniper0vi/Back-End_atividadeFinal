@@ -79,7 +79,6 @@ const pedidoRepository = {
 
             let subTotal = 0;
 
-            // Calcular o valor total do pedido com base nos itens atualizados
             for (const item of itens) {
                 const [produto] = await conn.execute(
                     "SELECT preco FROM produtos WHERE id = ?",
@@ -90,20 +89,18 @@ const pedidoRepository = {
                     throw new Error(`Produto ${item.produtoId} não encontrado`);
                 }
                 
-                const valor = produto[0].preco;
+                const valor = produto[0].preco; 
                 subTotal += valor * item.quantidade;
 
                 
                 
             }
 
-            // Atualizar o valor total do pedido
             await conn.execute(
                 "UPDATE pedidos SET valorTotal = ?, Status = ? WHERE id = ?",
                 [subTotal, pedido.status, id]
             );            
 
-            // Atualizar os itens do pedido
             for (const item of itens) {
                 const [produto] = await conn.execute(
                     "SELECT preco FROM produtos WHERE id = ?",
@@ -135,16 +132,13 @@ const pedidoRepository = {
         const conn = await connection.getConnection();
 
         try {
-            // Iniciar uma transação para garantir a integridade dos dados
             await conn.beginTransaction();
 
-            // Deletar os itens associados ao pedido
             await conn.execute(
                 "DELETE FROM itens_pedidos WHERE pedidoId = ?",
                 [id]
             );
 
-            // Deletar o pedido
             await conn.execute(
                 "DELETE FROM pedidos WHERE id = ?",
                 [id]
@@ -165,27 +159,22 @@ const pedidoRepository = {
         const conn = await connection.getConnection();
 
         try {
-            // Iniciar uma transação para garantir a integridade dos dados
             await conn.beginTransaction();
 
-            // Verificar se o item existe no pedido
             const [item] = await conn.execute(
                 "SELECT * FROM itens_pedidos WHERE id = ? AND pedidoId = ?",
                 [itemId, pedidoId]
             );
 
-            // Se o item não existir, lançar um erro
             if (item.length === 0) {
                 throw new Error("Item não encontrado no pedido");
             }
 
-            // Deletar o item do pedido
             await conn.execute(
                 "DELETE FROM itens_pedidos WHERE id = ?",
                 [itemId]
             );
 
-            // Recalcular o valor total do pedido após a remoção do item
             const [itens] = await conn.execute(
                 "SELECT quantidade, valorItem FROM itens_pedidos WHERE pedidoId = ?",
                 [pedidoId]
@@ -193,12 +182,10 @@ const pedidoRepository = {
 
             let valorTotal = 0;
 
-            // Calcular o valor total do pedido com base nos itens restantes
             itens.forEach(i => {
                 valorTotal += i.quantidade * i.valorItem;
             });
 
-            // Atualizar o valor total do pedido no banco de dados
             await conn.execute(
                 "UPDATE pedidos SET valorTotal = ? WHERE id = ?",
                 [valorTotal, pedidoId]
@@ -251,14 +238,12 @@ const pedidoRepository = {
 
             const preco = produto[0].preco;
 
-            // Inserir o novo item no pedido
             await conn.execute(
                 `INSERT INTO itens_pedidos (pedidoId, produtoId, quantidade, valorItem)
              VALUES (?, ?, ?, ?)`,
                 [pedidoId, item.produtoId, item.quantidade, preco]
             );
 
-            // Atualizar o valor total do pedido no banco de dados
             await conn.execute(
                 `UPDATE pedidos 
              SET valorTotal = valorTotal + ? 
@@ -283,47 +268,39 @@ const pedidoRepository = {
         const conn = await connection.getConnection();
 
         try {
-            // Iniciar uma transação para garantir a integridade dos dados
             await conn.beginTransaction();
 
-            // Validar a quantidade do item
             if (quantidade === undefined || quantidade <= 0) {
                 throw new Error("Quantidade inválida");
             }
 
-            // Verificar se o item existe no pedido
             const [item] = await conn.execute(
                 "SELECT * FROM itens_pedidos WHERE id = ? AND pedidoId = ?",
                 [itemId, pedidoId]
             );
 
-            // Se o item não existir, lançar um erro
             if (item.length === 0) {
                 throw new Error("Item não encontrado no pedido");
             }
 
-            // Buscar o preço do produto associado ao item para calcular o valor total atualizado
             const [produto] = await conn.execute(
-                "SELECT preco FROM produtos WHERE idProduto = ?",
-                [item[0].ProdutoId]
+                "SELECT preco FROM produtos WHERE Id = ?",
+                [item[0].produtoId]
             );
 
-            // Se o produto não existir, lançar um erro
             if (!produto || produto.length === 0) {
                 throw new Error("Produto não encontrado");
             }
 
-            const valor = produto[0].preco;
+            const subTotal = produto[0].preco;
 
-            // Atualizar a quantidade do item no banco de dados
             await conn.execute(
                 `UPDATE itens_pedidos 
              SET quantidade = ?, valorItem = ? 
              WHERE id = ?`,
-                [quantidade, valor, itemId]
+                [quantidade, subTotal, itemId]
             );
 
-            // Recalcular o valor total do pedido após a atualização do item
             const [itens] = await conn.execute(
                 "SELECT quantidade, valorItem FROM itens_pedidos WHERE pedidoId = ?",
                 [pedidoId]
@@ -335,7 +312,6 @@ const pedidoRepository = {
                 valorTotal += i.quantidade * i.valorItem;
             });
 
-            // Atualizar o valor total do pedido no banco de dados
             await conn.execute(
                 "UPDATE pedidos SET valorTotal = ? WHERE id = ?",
                 [valorTotal, pedidoId]
@@ -358,7 +334,6 @@ const pedidoRepository = {
         const conn = await connection.getConnection();
 
         try {
-            // Iniciar uma transação para garantir a integridade dos dados
             await conn.beginTransaction();
 
             if (!status) {

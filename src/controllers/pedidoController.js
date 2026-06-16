@@ -5,7 +5,7 @@ import pedidoRepository from "../repositories/pedidoRepository.js";
 
 const pedidoController = {
 
-    // Criar um novo pedido, inserindo seus dados na tabela de pedidos
+
     criar: async (req, res) => {
         try {
             
@@ -44,7 +44,6 @@ const pedidoController = {
         }
     },
 
-    // Editar um pedido existente, atualizando seus campos com base no ID do pedido
     editar: async (req, res) => {
         try {
             const { id } = req.params;
@@ -95,7 +94,6 @@ const pedidoController = {
         }
     },
 
-    // Deletar um pedido com base no ID do pedido, removendo-o da tabela de pedidos
     deletar: async (req, res) => {
         try {
             const { id } = req.params;
@@ -119,7 +117,6 @@ const pedidoController = {
         }
     },
 
-    // Selecionar todos os pedidos, retornando uma lista de pedidos com seus campos correspondentes
     selecionar: async (req, res) => {
         try {
             const result = await pedidoRepository.selecionar();
@@ -132,7 +129,6 @@ const pedidoController = {
         }
     },
 
-    // Selecionar um pedido específico com base no ID do pedido, retornando os campos correspondentes do pedido
     adicionarItem: async (req, res) => {
         try {
             const { id } = req.params;
@@ -163,7 +159,6 @@ const pedidoController = {
         }
     },
 
-    // Editar um item específico de um pedido, atualizando seus campos com base no ID do pedido e no ID do item
     editarItem: async (req, res) => {
         try {
             const { id, itemId } = req.params;
@@ -192,7 +187,6 @@ const pedidoController = {
         }
     },
 
-    // Remover um item específico de um pedido, deletando-o com base no ID do pedido e no ID do item
     removerItem: async (req, res) => {
         try {
             const { id, itemId } = req.params;
@@ -223,7 +217,6 @@ const pedidoController = {
         }
     },
 
-    // Editar o status de um pedido, atualizando-o com base no ID do pedido
     editarStatus: async (req, res) => {
         try {
             const { id } = req.params;
