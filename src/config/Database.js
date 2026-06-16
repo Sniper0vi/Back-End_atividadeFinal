@@ -1,6 +1,7 @@
- import mysql from 'mysql2/promise';
+import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 
+dotenv.config();
 
 // Singleton para a conexão com o banco de dados
 class Database {
@@ -54,17 +55,17 @@ export async function initializeDatabase() {
 
         const dbName = process.env.DB_DATABASE || 'deploy';
 
-
         await tempConnection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
         await tempConnection.query(`USE \`${dbName}\`;`);
 
-
         await tempConnection.query(`
-    CONSTRAINT FK_Produtos_Categorias
-    FOREIGN KEY (idCategoria) REFERENCES Categorias(id)
-);
+            CREATE TABLE IF NOT EXISTS categorias(
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                nome VARCHAR(45) NOT NULL,
+                descricao VARCHAR(100) NULL,
+                dataCad TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
         `);
-
 
         await tempConnection.query(`
             CREATE TABLE IF NOT EXISTS Produtos(
@@ -73,18 +74,11 @@ export async function initializeDatabase() {
                 descricao VARCHAR(45) NULL,
                 preco DECIMAL(10,2) NOT NULL,
                 image VARCHAR(250) NOT NULL,
-                quantidade DECIMAL (18,2) NOT NULL,
+                quantidade DECIMAL(18,2) NOT NULL,
                 idCategoria INT NOT NULL,
                 dataCad TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            );	
-        `);
-        await tempConnection.query(`
-            CREATE TABLE IF NOT EXISTS categorias(
-                id INT PRIMARY KEY AUTO_INCREMENT,
-                nome VARCHAR(45) NOT NULL,
-                descricao VARCHAR(100) NULL,
-                dataCad TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );	
+                CONSTRAINT FK_Produtos_Categorias FOREIGN KEY (idCategoria) REFERENCES categorias(id)
+            );
         `);
         await tempConnection.query(`
             CREATE TABLE IF NOT EXISTS Pedidos(
@@ -101,13 +95,9 @@ export async function initializeDatabase() {
                 produtoId INT NOT NULL,
                 quantidade DECIMAL(10,2) NOT NULL,
                 valorItem DECIMAL(10,2) NOT NULL,
-                
-                CONSTRAINT FK_itens_Pedidos_Pedidos
-                FOREIGN KEY (pedidoId) REFERENCES Pedidos(id),
-                
-                CONSTRAINT FK_itens_Pedidos_Produtos
-                FOREIGN KEY (produtoId) REFERENCES Produtos(id)
-)
+                CONSTRAINT FK_itens_Pedidos_Pedidos FOREIGN KEY (pedidoId) REFERENCES Pedidos(id),
+                CONSTRAINT FK_itens_Pedidos_Produtos FOREIGN KEY (produtoId) REFERENCES Produtos(id)
+            );
         `);
 
 
