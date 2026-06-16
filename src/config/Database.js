@@ -65,7 +65,7 @@ export async function initializeDatabase() {
         await tempConnection.query(`USE \`${dbName}\`;`);
 
         await tempConnection.query(`
-            CREATE TABLE IF NOT EXISTS categorias(
+            CREATE TABLE IF NOT EXISTS Categoria(
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 nome VARCHAR(45) NOT NULL,
                 descricao VARCHAR(100) NULL,
@@ -83,7 +83,7 @@ export async function initializeDatabase() {
                 quantidade DECIMAL(18,2) NOT NULL,
                 idCategoria INT NOT NULL,
                 dataCad TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                CONSTRAINT FK_Produtos_Categorias FOREIGN KEY (idCategoria) REFERENCES categorias(id)
+                CONSTRAINT FK_Produtos_Categoria FOREIGN KEY (idCategoria) REFERENCES Categoria(id)
             );
         `);
         await tempConnection.query(`
