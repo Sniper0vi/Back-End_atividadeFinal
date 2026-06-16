@@ -60,14 +60,14 @@ export async function initializeDatabase() {
 
 
         await tempConnection.query(`
-    CONSTRAINT FK_produtos_categorias
-    FOREIGN KEY (idCategoria) REFERENCES categorias(id)
+    CONSTRAINT FK_Produtos_Categorias
+    FOREIGN KEY (idCategoria) REFERENCES Categorias(id)
 );
         `);
 
 
         await tempConnection.query(`
-            CREATE TABLE IF NOT EXISTS produtos(
+            CREATE TABLE IF NOT EXISTS Produtos(
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 nome VARCHAR(45) NOT NULL,
                 descricao VARCHAR(45) NULL,
@@ -79,7 +79,7 @@ export async function initializeDatabase() {
             );	
         `);
         await tempConnection.query(`
-            CREATE TABLE IF NOT EXISTS categorias(
+            CREATE TABLE IF NOT EXISTS Categorias(
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 nome VARCHAR(45) NOT NULL,
                 descricao VARCHAR(100) NULL,
@@ -87,7 +87,7 @@ export async function initializeDatabase() {
             );	
         `);
         await tempConnection.query(`
-            CREATE TABLE IF NOT EXISTS pedidos(
+            CREATE TABLE IF NOT EXISTS Pedidos(
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 valorTotal DECIMAL(10,2) NOT NULL,
                 Status ENUM("Aberto", "Finalizado", "Pendente") NOT NULL,
@@ -95,18 +95,18 @@ export async function initializeDatabase() {
             );
         `);
         await tempConnection.query(`
-            CREATE TABLE IF NOT EXISTS itens_pedidos(
+            CREATE TABLE IF NOT EXISTS itens_Pedidos(
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 pedidoId INT NOT NULL,
                 produtoId INT NOT NULL,
                 quantidade DECIMAL(10,2) NOT NULL,
                 valorItem DECIMAL(10,2) NOT NULL,
                 
-                CONSTRAINT FK_itens_pedidos_pedidos
-                FOREIGN KEY (pedidoId) REFERENCES pedidos(id),
+                CONSTRAINT FK_itens_Pedidos_Pedidos
+                FOREIGN KEY (pedidoId) REFERENCES Pedidos(id),
                 
-                CONSTRAINT FK_itens_pedidos_produtos
-                FOREIGN KEY (produtoId) REFERENCES produtos(id)
+                CONSTRAINT FK_itens_Pedidos_Produtos
+                FOREIGN KEY (produtoId) REFERENCES Produtos(id)
 )
         `);
 
